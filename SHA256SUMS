@@ -1,0 +1,9 @@
+0fdd58978f395caa2f72b1a62647fa5c4071db7899d7940234b2697afb133b48  ota/limitless-pendant-1.1.20-dev-release-0fdd5897.img
+e03aa55de923560835e3a6d0868ae6ea669e8061ebb421623038fa4bc9f88023  ota/limitless-pendant-1.1.20-production-release-e03aa55de923.img
+b1da1573b9c186cc1e8fbd4e1b6afea63778f8dbe0278cc506fe1fa32610677d  ota/limitless-pendant-1.1.9-production-release-b1da1573.img
+350787a28f7b66fc9100014fab7bb36b3879bdf5e24d0771606015fea3bd49c7  usb-shell-dumps/pendant-1.1.0-app-payload.bin
+fcd5ee7a8fd1c635c6b614ce3343aea888cfa636311834d786e6adb0dd633bde  usb-shell-dumps/pendant-1.1.0-slot0-internal.bin
+7f0070501464f21e81de7c847f8227621a2189083e980796989cb9bd29c7b5de  netcore/netcore-embedded-1.1.0.bin
+a94242ac13e9befb688318e61c0136c89069e9967334951a18774540c8a54b6e  netcore/netcore-embedded-1.1.20.bin
+ac87f1ec951ebee116a1290fe5d4c4e59881892fdcc71c1fcc583ad76ba73f18  netcore/netcore-embedded-1.1.9.bin
+bd35f61d3be2e89d49d2c438603065d17854bb869c4f19262f3448c00e4c0e5a  bootloader/nrf5340-appcore-boot-0x0-0x14000.bin
