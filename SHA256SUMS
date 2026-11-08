@@ -7,3 +7,5 @@ fcd5ee7a8fd1c635c6b614ce3343aea888cfa636311834d786e6adb0dd633bde  usb-shell-dump
 a94242ac13e9befb688318e61c0136c89069e9967334951a18774540c8a54b6e  netcore/netcore-embedded-1.1.20.bin
 ac87f1ec951ebee116a1290fe5d4c4e59881892fdcc71c1fcc583ad76ba73f18  netcore/netcore-embedded-1.1.9.bin
 bd35f61d3be2e89d49d2c438603065d17854bb869c4f19262f3448c00e4c0e5a  bootloader/nrf5340-appcore-boot-0x0-0x14000.bin
+94d38ea4f7cc8a273081ec6f5b76c87ab8b12bb11af08dd50c7c0016cd146eeb  usb-shell-dumps/pendant-1.1.5-signed-app-0x14000-0x93D43.bin
+d90d1805e20464edf566d510a7f8471c95e26cf9f92eb2d51f067816c76ab9ee  usb-shell-dumps/pendant-1.1.5-signed-app.manifest.json
