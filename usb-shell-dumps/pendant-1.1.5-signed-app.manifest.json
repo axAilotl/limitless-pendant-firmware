@@ -1,0 +1,56 @@
+{
+  "device": "Limitless Pendant",
+  "application_version": "1.1.5",
+  "build_identifier": "0e21a768aec0",
+  "zephyr": "3.5.99",
+  "source": "read-only devmem word reads over the normal USB shell",
+  "read_at_utc": "2026-11-08T18:16:03Z",
+  "image_base": "0x00014000",
+  "image_end": "0x00093d43",
+  "image_size": 523587,
+  "image_sha256": "94d38ea4f7cc8a273081ec6f5b76c87ab8b12bb11af08dd50c7c0016cd146eeb",
+  "header": {
+    "magic": "0x96f3b83d",
+    "load_address": "0x00000000",
+    "header_size": 512,
+    "protect_tlv_size": 0,
+    "payload_size": 522924,
+    "flags": "0x00000000",
+    "version": "1.1.5+0"
+  },
+  "tlv_area": {
+    "offset": "0x00093cac",
+    "magic": "0x6907",
+    "total": 151,
+    "entries": [
+      {
+        "type": "0x0010",
+        "length": 32,
+        "value_sha256": "5b47290074e9904fad0007e1d5aed49800adc0c7044538917afa924c9ab233ab",
+        "matches_image_hash": true
+      },
+      {
+        "type": "0x0001",
+        "length": 32,
+        "value_sha256": "95126e317331ae1921dbcb4338a4821d92e2d0bf9a1503c5dd524e2c222b4634",
+        "matches_production_key": true
+      },
+      {
+        "type": "0x0022",
+        "length": 71,
+        "format": "DER ECDSA P-256"
+      }
+    ]
+  },
+  "verification": {
+    "image_hash_tlv_matches": true,
+    "production_key_hash_matches": true,
+    "ecdsa_p256_signature_verified": true,
+    "signature_verified_against": "SPKI at bootloader 0x1125f (91 bytes)",
+    "sampled_readback": "16 words per 64 KiB re-read and matched"
+  },
+  "bootloader_snapshot_sha256": "bd35f61d3be2e89d49d2c438603065d17854bb869c4f19262f3448c00e4c0e5a",
+  "approtect": "0x50FA50FA",
+  "secureapprotect": "0x50FA50FA",
+  "note": "Read-only extraction; no writes, erase, reset or recovery-mode entry. Vendor firmware remains subject to vendor copyright; redistribution is the owner's decision."
+}
