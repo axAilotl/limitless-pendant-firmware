@@ -20,7 +20,6 @@ and the research gists linked at the bottom.
 | `ota/limitless-pendant-1.1.20-dev-release-0fdd5897.img` | 512.3 KiB | `0fdd58978f395caa2f72b1a62647fa5c4071db7899d7940234b2697afb133b48` | vendor OTA endpoint, development channel (same payload as release; only KEYHASH TLV differs) |
 | `usb-shell-dumps/pendant-1.1.0-slot0-internal.bin` | 966,656 | `fcd5ee7a8fd1c635c6b614ce3343aea888cfa636311834d786e6adb0dd633bde` | read from a retail unit's app slot over the stock USB shell (word reads at `0x14000+`, verified by sample re-reads) |
 | `usb-shell-dumps/pendant-1.1.5-signed-app-0x14000-0x93D43.bin` | 523,587 | `94d38ea4f7cc8a273081ec6f5b76c87ab8b12bb11af08dd50c7c0016cd146eeb` | read-only `devmem` word reads over the stock USB shell by @smanaton; bounded signed image, ECDSA P-256 verified against the retail SPKI |
-| `usb-shell-dumps/pendant-1.1.0-app-payload.bin` | 921,204 | `350787a28f7b66fc9100014fab7bb36b3879bdf5e24d0771606015fea3bd49c7` | payload split out of the slot dump above |
 | `netcore/netcore-embedded-1.1.0.bin` | 771,408 | `7f0070501464f21e81de7c847f8227621a2189083e980796989cb9bd29c7b5de` | extracted from the 1.1.0 `app_update.bin` container |
 | `netcore/netcore-embedded-1.1.9.bin` | 382,276 | `ac87f1ec951ebee116a1290fe5d4c4e59881892fdcc71c1fcc583ad76ba73f18` | extracted from the 1.1.9 `app_update.bin` container |
 | `netcore/netcore-embedded-1.1.20.bin` | 382,260 | `a94242ac13e9befb688318e61c0136c89069e9967334951a18774540c8a54b6e` | extracted from the 1.1.20 `app_update.bin` container (dev-channel child is byte-identical) |
