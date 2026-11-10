@@ -20,9 +20,6 @@ and the research gists linked at the bottom.
 | `ota/limitless-pendant-1.1.20-dev-release-0fdd5897.img` | 512.3 KiB | `0fdd58978f395caa2f72b1a62647fa5c4071db7899d7940234b2697afb133b48` | vendor OTA endpoint, development channel (same payload as release; only KEYHASH TLV differs) |
 | `usb-shell-dumps/pendant-1.1.0-slot0-internal.bin` | 966,656 | `fcd5ee7a8fd1c635c6b614ce3343aea888cfa636311834d786e6adb0dd633bde` | read from a retail unit's app slot over the stock USB shell (word reads at `0x14000+`, verified by sample re-reads) |
 | `usb-shell-dumps/pendant-1.1.5-signed-app-0x14000-0x93D43.bin` | 523,587 | `94d38ea4f7cc8a273081ec6f5b76c87ab8b12bb11af08dd50c7c0016cd146eeb` | read-only `devmem` word reads over the stock USB shell by @smanaton; bounded signed image, ECDSA P-256 verified against the retail SPKI |
-| `netcore/netcore-embedded-1.1.0.bin` | 771,408 | `7f0070501464f21e81de7c847f8227621a2189083e980796989cb9bd29c7b5de` | extracted from the 1.1.0 `app_update.bin` container |
-| `netcore/netcore-embedded-1.1.9.bin` | 382,276 | `ac87f1ec951ebee116a1290fe5d4c4e59881892fdcc71c1fcc583ad76ba73f18` | extracted from the 1.1.9 `app_update.bin` container |
-| `netcore/netcore-embedded-1.1.20.bin` | 382,260 | `a94242ac13e9befb688318e61c0136c89069e9967334951a18774540c8a54b6e` | extracted from the 1.1.20 `app_update.bin` container (dev-channel child is byte-identical) |
 | `bootloader/nrf5340-appcore-boot-0x0-0x14000.bin` | 81,920 | `bd35f61d3be2e89d49d2c438603065d17854bb869c4f19262f3448c00e4c0e5a` | app-core internal flash `0x0–0x14000`, read from a retail unit |
 
 `SHA256SUMS` at the root covers every file.
@@ -37,19 +34,26 @@ hardware is present on every unit. On a stock 1.1.0 unit the USB shell exposes
 `comm wifi_connect/server_connect` — an unauthenticated, configurable
 audio-streaming endpoint over Wi-Fi, no exploit needed.
 
-The 1.1.0 network-core child (771 KB) also contains the Wi-Fi stack; custom
-network-core firmware builders can lift the driver from it.
+(Correction: the earlier "network-core child" files were app-image slices;
+the Wi-Fi stack lives in the 1.1.0 app image itself.)
 
-## Network-core child images
+## Network-core: correction 2026-11-11
 
-The network-core update image rides **inside** `app_update.bin` — there is no
-separate bucket path. The extracted children are full Zephyr product apps
-(PDM capture + beamforming, IMU/battery/LED, BLE host, an mcumgr/SMP server
-that can write both cores' secondary slots), XIP-based at net-flash
-`0x36b54`, linked against a resident library below that base. The
-update-path verification inside these images is **SHA-256 only** — no
-signature check on this path; whether the resident flasher authenticates is
-the open question (see the gists).
+The `netcore-embedded-*.bin` files previously distributed here were **not
+network-core firmware** — they were exact contiguous slices of the app
+images (from the first interior `0x96F3B83D` constant to end-of-payload;
+the constant is present because the app contains `mcuboot_info` code).
+All three matched their app images byte-for-byte; they have been removed as
+duplicates. Credit: community analysis in limitless-libre#1 (comment
+2026-11-11) — independently re-verified here against our own artifacts.
+
+Corrections that follow: there is **no net OTA artifact in anything
+published** — the net core is factory-programmed; the `net_secondary`
+version strings (`88.89.8195+…` / `96.89.8195+…`) decode to SRAM pointers
+(`0x20035958` / `0x20035960`), i.e. an uninitialized read, and flash area 9
+(NAND) is FTL-unmapped and reads erased. The bootloader's image-3 → RAM →
+mailbox → `0x8800` net-flash handoff remains real bootloader code and the
+open question (does the resident net flasher authenticate?) is unchanged.
 
 ## MCUboot reference facts
 
