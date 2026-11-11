@@ -30,7 +30,9 @@ and the research gists linked at the bottom.
 | `ota/limitless-pendant-1.1.5-dev-release-0e6bd5b0.img` | 523,587 | `0e6bd5b0001194a92cc8ed6c9d5078f2d5961604679a1f9dcef6442a1aef712d` | vendor OTA endpoint, development channel (same payload; KEYHASH `60ae7f65…`) |
 | `ota/limitless-pendant-1.1.9-dev-release-087cd34f.img` | 524,490 | `087cd34fbb7e8e6d756e9c426369c3dd7e078f6348bca07813c3ed3fef1ab4d7` | vendor OTA endpoint, development channel (`1.1.9_bd223cf`); pairs with the production image already listed |
 
-`SHA256SUMS` at the root covers every file.
+`SHA256SUMS` at the root covers every file. The network-core artifacts
+(B0N, provision, net app for 1.0.1 / 1.1.5 / 1.1.20) are in
+[`net/`](net/README.md), which has its own inventory table.
 
 ## Why the 1.1.0 dump matters
 
@@ -45,23 +47,41 @@ audio-streaming endpoint over Wi-Fi, no exploit needed.
 (Correction: the earlier "network-core child" files were app-image slices;
 the Wi-Fi stack lives in the 1.1.0 app image itself.)
 
-## Network-core: correction 2026-11-11
+## Network core: resolved 2026-11-11
 
-The `netcore-embedded-*.bin` files previously distributed here were **not
-network-core firmware** — they were exact contiguous slices of the app
-images (from the first interior `0x96F3B83D` constant to end-of-payload;
-the constant is present because the app contains `mcuboot_info` code).
-All three matched their app images byte-for-byte; they have been removed as
-duplicates. Credit: community analysis in limitless-libre#1 (comment
-2026-11-11) — independently re-verified here against our own artifacts.
+Two corrections and a result.
 
-Corrections that follow: there is **no net OTA artifact in anything
-published** — the net core is factory-programmed; the `net_secondary`
-version strings (`88.89.8195+…` / `96.89.8195+…`) decode to SRAM pointers
-(`0x20035958` / `0x20035960`), i.e. an uninitialized read, and flash area 9
-(NAND) is FTL-unmapped and reads erased. The bootloader's image-3 → RAM →
-mailbox → `0x8800` net-flash handoff remains real bootloader code and the
-open question (does the resident net flasher authenticate?) is unchanged.
+**1. The net core is in the vendor's own artifacts.** The earlier
+`netcore-embedded-*.bin` files were not network-core firmware — they were
+contiguous slices of the app images, and have been removed. But the firmware
+endpoint also signs `merged_domains.hex`, the sysbuild multi-domain output,
+which contains both cores. The B0N, provision and net app extracted from those
+builds are in [`net/`](net/README.md). The B0N is byte-identical across 1.0.1,
+1.1.5 and 1.1.20, and the net app payload is too, so the firmware has not
+changed since 1.0.1. There is still no net OTA artifact in any manifest; the
+vendor has never shipped a net-core update, but it did once ship the build
+output.
+
+**2. The net flasher does not authenticate.** The net B0N is the NCS default
+for `SOC_NRF5340_CPUNET`: hash-only. No P-256 constants, no
+`verify_public_keys`, and `0x55e0` bytes — smaller than the hash-only reference
+build. The images do carry a valid ECDSA P-256 signature (over
+`sha256(sha256(payload))`), and each build has its own key matching the
+provision, but the net B0N never reads it. The hash it does check is stored
+inside the image being flashed.
+
+**3. Confirmed on hardware.** A retail unit booted a net image whose
+`fw_info.version` was bumped and whose hash was recomputed, leaving the
+signature stale — Bluetooth came up normally. PCD writes at `0x01008800` in
+place, so there is no fallback image. Done entirely over the side-button USB
+recovery port: no SWD, no opening the case.
+
+Details, disassembly and boot logs: [`bootloader/NET-CORE-UPDATE.md`](bootloader/NET-CORE-UPDATE.md).
+Client: [`net/upload-net.py`](net/upload-net.py).
+
+Note that the `net_secondary` version strings (`88.89.8195+…`) are still an
+uninitialized read (SRAM pointers): flash area 9 (NAND) is FTL-unmapped and
+reads erased. That datum was real; only its interpretation was wrong.
 
 ## MCUboot reference facts
 
@@ -88,10 +108,11 @@ flash-area table, and boot strings themselves.
   `94d38ea4f7cc8a273081ec6f5b76c87ab8b12bb11af08dd50c7c0016cd146eeb`,
   and signed-content digest
   `5b47290074e9904fad0007e1d5aed49800adc0c7044538917afa924c9ab233ab`.
-- **Net-flash resident region `0x0–0x36b54`** (resident boot chain + shared
-  library + the RPC flasher at `0x8800`) — present in **no** extracted
-  artifact anywhere. This is the single highest-value missing dump: it would
-  settle whether the net-core update path authenticates images.
+- **Net-flash resident region `0x0–0x36b54`** — now covered. The B0N
+  (`0x0–0x55e0`), provision (`0x85a8–0x87b0`) and net app (`0x8800–0x32304`)
+  are in [`net/`](net/README.md), extracted from the vendor's
+  `merged_domains.hex`. Still missing: the UICR of the net core, and a
+  *readback* from a device (the artifacts are build outputs, not dumps).
 - Net-core UICR (never observed).
 - Bootloader/UICR dumps + dev-key acceptance results across manufacture
   batches (batch variance is cheap and occasionally decisive).
