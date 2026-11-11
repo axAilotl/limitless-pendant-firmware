@@ -20,7 +20,14 @@ and the research gists linked at the bottom.
 | `ota/limitless-pendant-1.1.20-dev-release-0fdd5897.img` | 512.3 KiB | `0fdd58978f395caa2f72b1a62647fa5c4071db7899d7940234b2697afb133b48` | vendor OTA endpoint, development channel (same payload as release; only KEYHASH TLV differs) |
 | `usb-shell-dumps/pendant-1.1.0-slot0-internal.bin` | 966,656 | `fcd5ee7a8fd1c635c6b614ce3343aea888cfa636311834d786e6adb0dd633bde` | read from a retail unit's app slot over the stock USB shell (word reads at `0x14000+`, verified by sample re-reads) |
 | `usb-shell-dumps/pendant-1.1.5-signed-app-0x14000-0x93D43.bin` | 523,587 | `94d38ea4f7cc8a273081ec6f5b76c87ab8b12bb11af08dd50c7c0016cd146eeb` | read-only `devmem` word reads over the stock USB shell by @smanaton; bounded signed image, ECDSA P-256 verified against the retail SPKI |
-| `bootloader/nrf5340-appcore-boot-0x0-0x14000.bin` | 81,920 | `bd35f61d3be2e89d49d2c438603065d17854bb869c4f19262f3448c00e4c0e5a` | app-core internal flash `0x0–0x14000`, read from a retail unit |
+| `bootloader/nrf5340-appcore-boot-0x0-0x14000.bin` | 81,920 | `bd35f61d3be2e89d49d2c438603065d17854bb869c4f19262f3448c00e4c0e5a` | app-core internal flash `0x0-0x14000`, read from a retail unit |
+| `ota/limitless-pendant-1.0.1-production-release-a584e7cf.img` | 509,422 | `a584e7cfc1aeb985c1af3ac0275aecddea8e5000e409d01d046be60634173c66` | vendor OTA endpoint, production channel (`1.0.1_04bc288`) |
+| `ota/limitless-pendant-1.0.1-dev-release-e42a2751.img` | 509,423 | `e42a27518a54324c52dc6f649e6fdf3c2411bedcfe2cf1761b088c514e4ad8f4` | vendor OTA endpoint, development channel (same payload; KEYHASH `60ae7f65…`) |
+| `ota/limitless-pendant-1.1.0-production-release-44912b2e.img` | 522,827 | `44912b2ec5f6ac22474d796cd778ae8d8766be07213da639bba749608f532f09` | vendor OTA endpoint, production channel (`1.1.0_90a06ec`) |
+| `ota/limitless-pendant-1.1.0-dev-release-a8da9f7a.img` | 522,827 | `a8da9f7ad2de098155f8bd0231c136584efe87bc01c95d27931418d21c3005e1` | vendor OTA endpoint, development channel (same payload; KEYHASH `60ae7f65…`) |
+| `ota/limitless-pendant-1.1.5-production-release-94d38ea4.img` | 523,587 | `94d38ea4f7cc8a273081ec6f5b76c87ab8b12bb11af08dd50c7c0016cd146eeb` | vendor OTA endpoint, production channel (`1.1.5_0e21a76`); byte-identical to the USB-shell readback above |
+| `ota/limitless-pendant-1.1.5-dev-release-0e6bd5b0.img` | 523,587 | `0e6bd5b0001194a92cc8ed6c9d5078f2d5961604679a1f9dcef6442a1aef712d` | vendor OTA endpoint, development channel (same payload; KEYHASH `60ae7f65…`) |
+| `ota/limitless-pendant-1.1.9-dev-release-087cd34f.img` | 524,490 | `087cd34fbb7e8e6d756e9c426369c3dd7e078f6348bca07813c3ed3fef1ab4d7` | vendor OTA endpoint, development channel (`1.1.9_bd223cf`); pairs with the production image already listed |
 
 `SHA256SUMS` at the root covers every file.
 

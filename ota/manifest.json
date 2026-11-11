@@ -1,0 +1,86 @@
+{
+  "1.0.1 development": {
+    "app_version": "1.0.1 04bc28843289",
+    "build": "04bc28843289",
+    "bytes": 509423,
+    "digest": "c8db74dad1e380c5c11b671fcab69bd199be2887d3f152f23e39c4ea7ae93157",
+    "file": "ota/limitless-pendant-1.0.1-dev-release-e42a2751.img",
+    "hdr_plus_payload": 509272,
+    "header_version": "0.1.0+1",
+    "keyhash": "60ae7f65f255d3f90d7145fabb0bf84c00e4c351226f561478759f3d6e215e0c",
+    "sha256": "e42a27518a54324c52dc6f649e6fdf3c2411bedcfe2cf1761b088c514e4ad8f4",
+    "tlv_bytes": 155
+  },
+  "1.0.1 production": {
+    "app_version": "1.0.1 04bc28843289",
+    "build": "04bc28843289",
+    "bytes": 509422,
+    "digest": "c8db74dad1e380c5c11b671fcab69bd199be2887d3f152f23e39c4ea7ae93157",
+    "file": "ota/limitless-pendant-1.0.1-production-release-a584e7cf.img",
+    "hdr_plus_payload": 509272,
+    "header_version": "0.1.0+1",
+    "keyhash": "95126e317331ae1921dbcb4338a4821d92e2d0bf9a1503c5dd524e2c222b4634",
+    "sha256": "a584e7cfc1aeb985c1af3ac0275aecddea8e5000e409d01d046be60634173c66",
+    "tlv_bytes": 154
+  },
+  "1.1.0 development": {
+    "app_version": "1.1.0 90a06eccd717",
+    "build": "90a06eccd717",
+    "bytes": 522827,
+    "digest": "2f8f1ce30f1971b982b6f9946060b0a02dfd25bfdeab6214b58c7ff1bc689d23",
+    "file": "ota/limitless-pendant-1.1.0-dev-release-a8da9f7a.img",
+    "hdr_plus_payload": 522676,
+    "header_version": "0.0.1+1",
+    "keyhash": "60ae7f65f255d3f90d7145fabb0bf84c00e4c351226f561478759f3d6e215e0c",
+    "sha256": "a8da9f7ad2de098155f8bd0231c136584efe87bc01c95d27931418d21c3005e1",
+    "tlv_bytes": 155
+  },
+  "1.1.0 production": {
+    "app_version": "1.1.0 90a06eccd717",
+    "build": "90a06eccd717",
+    "bytes": 522827,
+    "digest": "2f8f1ce30f1971b982b6f9946060b0a02dfd25bfdeab6214b58c7ff1bc689d23",
+    "file": "ota/limitless-pendant-1.1.0-production-release-44912b2e.img",
+    "hdr_plus_payload": 522676,
+    "header_version": "0.0.1+1",
+    "keyhash": "95126e317331ae1921dbcb4338a4821d92e2d0bf9a1503c5dd524e2c222b4634",
+    "sha256": "44912b2ec5f6ac22474d796cd778ae8d8766be07213da639bba749608f532f09",
+    "tlv_bytes": 155
+  },
+  "1.1.5 development": {
+    "app_version": "1.1.5 0e21a768aec0",
+    "build": "0e21a768aec0",
+    "bytes": 523587,
+    "digest": "5b47290074e9904fad0007e1d5aed49800adc0c7044538917afa924c9ab233ab",
+    "file": "ota/limitless-pendant-1.1.5-dev-release-0e6bd5b0.img",
+    "hdr_plus_payload": 523436,
+    "header_version": "0.5.1+1",
+    "keyhash": "60ae7f65f255d3f90d7145fabb0bf84c00e4c351226f561478759f3d6e215e0c",
+    "sha256": "0e6bd5b0001194a92cc8ed6c9d5078f2d5961604679a1f9dcef6442a1aef712d",
+    "tlv_bytes": 155
+  },
+  "1.1.5 production": {
+    "app_version": "1.1.5 0e21a768aec0",
+    "build": "0e21a768aec0",
+    "bytes": 523587,
+    "digest": "5b47290074e9904fad0007e1d5aed49800adc0c7044538917afa924c9ab233ab",
+    "file": "ota/limitless-pendant-1.1.5-production-release-94d38ea4.img",
+    "hdr_plus_payload": 523436,
+    "header_version": "0.5.1+1",
+    "keyhash": "95126e317331ae1921dbcb4338a4821d92e2d0bf9a1503c5dd524e2c222b4634",
+    "sha256": "94d38ea4f7cc8a273081ec6f5b76c87ab8b12bb11af08dd50c7c0016cd146eeb",
+    "tlv_bytes": 155
+  },
+  "1.1.9 development": {
+    "app_version": "1.1.9 bd223cf1282a",
+    "build": "bd223cf1282a",
+    "bytes": 524490,
+    "digest": "67ce5362c4e41f60e4228dfa493d9a56449b646fe4c09a03d8ae8f4dbbbca285",
+    "file": "ota/limitless-pendant-1.1.9-dev-release-087cd34f.img",
+    "hdr_plus_payload": 524340,
+    "header_version": "0.9.1+1",
+    "keyhash": "60ae7f65f255d3f90d7145fabb0bf84c00e4c351226f561478759f3d6e215e0c",
+    "sha256": "087cd34fbb7e8e6d756e9c426369c3dd7e078f6348bca07813c3ed3fef1ab4d7",
+    "tlv_bytes": 154
+  }
+}
