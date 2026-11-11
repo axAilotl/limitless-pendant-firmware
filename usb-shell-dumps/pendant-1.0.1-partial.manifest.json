@@ -1,0 +1,31 @@
+{
+  "version": "1.0.1",
+  "build": "04bc28843289",
+  "role": "Partial recovery. Not a restorable image.",
+  "file": "usb-shell-dumps/pendant-1.0.1-partial-0x94000-0xF23D7.bin",
+  "bytes": 386007,
+  "sha256": "4c1eb90b03123dcfe39ef61b44ef07ffb12726ed26ab554ebbc7401e3149ad5d",
+  "flash_range": "0x94000-0xF23D7",
+  "provenance": "Read-only devmem word reads over the stock Zephyr USB shell of a retail unit. No writes, no erase, no recovery-mode entry, no teardown.",
+  "image_layout": {
+    "slot_base": "0x14000",
+    "tlv_area": "0xF233C",
+    "hdr_plus_payload_bytes": 910140,
+    "hdr_plus_payload_hex": "0xDE33C",
+    "tlv_end": "0xF23D7",
+    "coverage_of_image": "42.4%",
+    "note": "The first 524,288 bytes of the image were overwritten by 1.1.5; only the tail survives."
+  },
+  "tlvs": {
+    "0x10_sha256": "3cad83307770d3d722ad0b29a88a02d1136f43c8f7daed3ed19b5c504aac0eed",
+    "0x01_keyhash": "95126e317331ae1921dbcb4338a4821d92e2d0bf9a1503c5dd524e2c222b4634",
+    "0x22_ecdsa256_der_len": 71
+  },
+  "verification": {
+    "keyhash_matches_retail_spki": true,
+    "ecdsa_valid_over_embedded_digest": true,
+    "method": "MCUboot signs the image digest and the digest is carried in the 0x10 TLV, so the signature can be verified without the payload. See verify-1.0.1.py."
+  },
+  "why_it_survived": "The update path erases only the sectors the incoming image needs rather than bulk-erasing the slot. 1.1.5 ends at 0x93D43, inside the 0x93000 sector, so everything from 0x94000 keeps the older image's bytes.",
+  "limits": "Partial and not bootable/restorable. Useful for 1.0.x comparison (predates the 1.1.5 Wi-Fi-stack removal) and for recorder/flush analysis."
+}

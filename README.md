@@ -20,7 +20,8 @@ and the research gists linked at the bottom.
 | `ota/limitless-pendant-1.1.20-dev-release-0fdd5897.img` | 512.3 KiB | `0fdd58978f395caa2f72b1a62647fa5c4071db7899d7940234b2697afb133b48` | vendor OTA endpoint, development channel (same payload as release; only KEYHASH TLV differs) |
 | `usb-shell-dumps/pendant-1.1.0-slot0-internal.bin` | 966,656 | `fcd5ee7a8fd1c635c6b614ce3343aea888cfa636311834d786e6adb0dd633bde` | read from a retail unit's app slot over the stock USB shell (word reads at `0x14000+`, verified by sample re-reads) |
 | `usb-shell-dumps/pendant-1.1.5-signed-app-0x14000-0x93D43.bin` | 523,587 | `94d38ea4f7cc8a273081ec6f5b76c87ab8b12bb11af08dd50c7c0016cd146eeb` | read-only `devmem` word reads over the stock USB shell by @smanaton; bounded signed image, ECDSA P-256 verified against the retail SPKI |
-| `bootloader/nrf5340-appcore-boot-0x0-0x14000.bin` | 81,920 | `bd35f61d3be2e89d49d2c438603065d17854bb869c4f19262f3448c00e4c0e5a` | app-core internal flash `0x0–0x14000`, read from a retail unit |
+| `bootloader/nrf5340-appcore-boot-0x0-0x14000.bin` | 81,920 | `bd35f61d3be2e89d49d2c438603065d17854bb869c4f19262f3448c00e4c0e5a` | app-core internal flash `0x0-0x14000`, read from a retail unit |
+| `usb-shell-dumps/pendant-1.0.1-partial-0x94000-0xF23D7.bin` | 386,007 | `4c1eb90b03123dcfe39ef61b44ef07ffb12726ed26ab554ebbc7401e3149ad5d` | read-only `devmem` over the stock USB shell (no writes, no recovery, no teardown). **Partial**: tail of the image plus intact signed TLV block. Not restorable — see `pendant-1.0.1-partial.manifest.json`. |
 
 `SHA256SUMS` at the root covers every file.
 
