@@ -231,12 +231,18 @@ the same boot log. The path is repeatable.
 
 ## Side effects
 
-The PCD copy starts at `0x01008800`, which is not sector-aligned, so the first
-erased sector is `0x01008000`, which contains the provision at `0x010085a8`.
-It is wiped. This is harmless here: `0x010085a8` appears nowhere in the B0N, it
-never reads the provision, and every PCD update would erase it anyway. It does
-mean a device that later needs ECDSA net validation would need its provision
-restored by other means.
+The PCD copy starts at `0x01008800`, which is not sector-aligned. `pcd_fw_copy`
+writes through `stream_flash`, which erases whole pages, so the first sector it
+erases is `0x01008000` — and that sector contains the provision at
+`0x010085a8`. On a normal part it is erased along with the net app's first
+page. This is harmless here: `0x010085a8` appears nowhere in the B0N, it never
+reads the provision, and every PCD update would erase it anyway. It does mean a
+device that later needs ECDSA net validation would need its provision restored
+by other means.
+
+This is inference from `pcd_fw_copy` plus the flash geometry, not an
+observation — the app core cannot read net flash, and the net core has no
+readback path.
 
 ## Failure behaviour (do not test casually)
 
