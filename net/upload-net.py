@@ -15,9 +15,10 @@ Usage:
     python upload-net.py --port COM6 --wrap net-app-1.1.5-release.bin -o out.bin
 
 Notes:
-    * The stock bootloader's SMP receive buffer is 128 bytes, so base64 frames
-      longer than ~127 characters are dropped without an error. 40-byte chunks
-      work. At that size an upload takes about 15 minutes.
+    * The stock bootloader's SMP receive buffer is small: a 127-character
+      base64 frame is accepted, a 135-character one is dropped without an
+      error (the reference build uses 1024). 40-byte chunks fit. At that size
+      an upload takes about 15 minutes.
     * `os reset` returns EBUSY (10) while the PCD copy is running and 0 after
       the net core reports DONE, so it doubles as a completion check.
 """

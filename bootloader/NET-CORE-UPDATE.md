@@ -16,7 +16,7 @@ ECDSA signature the vendor puts in the image is never checked.
 
 ```
 0x01000000..0x010055e0   B0N (net-core bootloader)        21,984 B
-0x010055e0..0x010085a8   padding
+0x010055e0..0x010085a8   not present in the build output
 0x010085a8..0x010087b0   provision (version + key hash)      520 B
 0x01008800..0x01032304   net app (BT controller)        170,756 B
 ```
@@ -63,23 +63,52 @@ int network_core_update(bool wait)
 }
 ```
 
-Disassembly of `0xda96` (the stock hook):
+Disassembly of the stock hook. `0xda96` is a thin wrapper; the body is
+tail-called at `0x7ba0`:
 
 ```
-0xda96  cmp r0, #3                     ; img_index
-0xdab2  ldr r0, [flash_sim]            ; 0x200089f6 on this build
-0xdabc  ldr r1, [r0]                   ; ih_magic
-0xdac0  cmp r1, 0x96f3b83d
-0xdac8  ldrh r2, [r0, #8]              ; ih_hdr_size
-0xdacc  ldr r1, [r0, r2, +4]           ; vtable[1]
-0xdad0  cmp r1, 0x01000000
-0xdad4  bl 0x79ec                      ; pcd_network_core_update_initiate
+0xda96  cmp     r0, #3
+0xda9a  movs    r0, #0
+0xda9c  bne     0xdaa2
+0xda9e  b.w     0x7ba0
+0xdaa2  bx      lr
+
+0x7ba0  push    {r0, r1, r4, lr}
+0x7ba2  mov     r4, r0                  ; the `wait` argument
+0x7ba4  ldr     r0, [pc, #0x40]         ; 0x10498, flash device
+0x7ba6  bl      0xfc34                  ; device_is_ready
+0x7baa  cbz     r0, 0x7bda              ; -> -ENODEV (0xffffffed)
+0x7bac  movs    r0, #0
+0x7bae  add     r1, sp, #4
+0x7bb0  bl      0x68c0                  ; flash_simulator_get_memory -> 0x200089f6
+0x7bb4  ldr     r3, [pc, #0x34]         ; 0x96f3b83d
+0x7bb6  ldr     r2, [r0]                ; ih_magic
+0x7bb8  cmp     r2, r3
+0x7bba  bne     0x7be0                  ; -> -ENODATA (0xffffffc3)
+0x7bbc  ldrh    r3, [r0, #8]            ; ih_hdr_size
+0x7bbe  ldr     r1, [r0, #0xc]          ; ih_img_size
+0x7bc0  add     r0, r3                  ; vtable
+0x7bc2  ldr     r3, [r0, #4]            ; vtable[1], the reset vector
+0x7bc4  cmp.w   r3, #0x1000000
+0x7bc8  bls     0x7be0                  ; -> -ENODATA
+0x7bca  cbz     r4, 0x7bd4
+0x7bcc  bl      0x7a34                  ; pcd_network_core_update(vtable, size)
+0x7bd4  bl      0x79ec                  ; pcd_network_core_update_initiate(...)
 ```
 
-`0x79ec` inlines `pcd_network_core_update_initiate()`: magic `0xb5b4b3b6` at
-`0x20000000`, source pointer at `0x20000004`, length at `0x20000008`, offset
-`0x8800` at `0x2000000c`, SPU extdomain at `0x50003000+0x440`, a 1 s
-`k_busy_wait`, then `k_timer_start`.
+`0x79ec` sets `0x50003000+0x440` (SPU extdomain), passes the COPY magic
+`0xb5b4b3b6`, the vtable pointer and `ih_img_size` to `0x78f8`, which writes:
+
+```
+0x20000000  magic  0xb5b4b3b6
+0x20000004  data   vtable (staged payload in the flash simulator)
+0x20000008  len    ih_img_size
+0x2000000c  offset 0x8800
+```
+
+then a 1 s `k_busy_wait` and a timer start. That is
+`pcd_network_core_update_initiate()` with the arguments the hook read straight
+out of the upload.
 
 So the only checks between a host and net flash are: `img_index == 3`, an
 MCUboot magic, and a reset vector above `0x01000000`.
@@ -102,8 +131,10 @@ config SB_VALIDATE_FW_HASH
 
 The stock B0N is that default build. Three independent confirmations:
 
-**1. Size.** The stock B0N is `0x55e0`. The Nordic hash-only reference build
-is `0x58e6`; an ECDSA build does not fit.
+**1. Size.** The stock B0N is `0x55e0`, slightly smaller than the Nordic
+hash-only reference build (`0x58e6`). That alone proves nothing — the B0N
+container is `0x8800`, so there is headroom — but it is consistent with a build
+that never enabled the signature path.
 
 **2. Constants.** P-256 constants in the stock B0N versus the app-core
 bootloader (which does validate signatures):
@@ -115,21 +146,34 @@ bootloader (which does validate signatures):
 | P-256 Gx | absent | present |
 | P-256 Gy | absent | present |
 
-**3. Code.** The stock B0N's validation path is:
+**3. Code.** The stock B0N contains exactly one crypto routine: SHA-256. The
+validation routine (`0x1040ae`) takes an image address, walks its `fw_info`,
+checks the magic, the address and `valid == 0x9102ffff`, finds the 12-byte
+validation-info magic, then compares a SHA-256 of the payload against the hash
+stored in that validation info:
 
 ```
-validate_firmware          (0x1040ae)
+0x1040ae(image_addr, ...)
   fw_info magic, address, valid == 0x9102ffff
   memcmp validation-info magic (12 bytes)
-  FUN_0x104052(payload, fw_size, hash_ptr)
-      FUN_0x104080 -> FUN_0x1031f0        ; SHA-256
-      FUN_0x1023c(computed, stored, 0x20) ; memcmp
+  0x104052(payload, fw_size, hash_ptr)
+      0x104080 -> 0x1031f0            ; SHA-256
+      0x1023c(computed, stored, 0x20) ; memcmp, no signature step
 ```
 
-There is no `verify_public_keys`, no `root_of_trust_verify`, no P-256 code
-anywhere in the image. The net core PCD copy handler is at `0x102608`
-(`pcd_fw_copy`, `stream_flash_buffered_write`), and the status/idle loop is at
-`0x1005cc`.
+There is no public-key step, no `verify_public_keys`, no
+`root_of_trust_verify`, and no P-256 code anywhere in the image. The two
+SHA-256 call sites are this check and its caller. The PCD handling (status
+dispatch, the hash check, the copy retry at `0x102608`) is in `0x1005cc` and
+`0x102608`.
+
+I could not map every B0N routine onto a current NCS symbol — the build is from
+an older NCS than the one in the reference tree, and the decompiler mis-orders
+some of the copy path's control flow. The conclusion does not depend on the
+symbol names: the image contains no elliptic-curve code at all, and the only
+verify routine compares a hash to a hash stored inside the image it is
+checking.
+
 
 ### The signature the images do carry
 
@@ -154,9 +198,12 @@ B0N just never looks.
 ## Hardware result
 
 Two uploads over the side-button serial recovery port (`2FE3:0100`, SMP
-`image` group, `image = 3`), 171,268 B each. The stock bootloader's SMP receive
-buffer is 128 bytes, so frames over ~127 base64 characters are dropped
-silently; 40-byte chunks work and take about 15 minutes.
+`image` group, `image = 3`), 171,268 B each. Frame size is capped by the stock
+bootloader's receive buffer: a 127-character base64 frame is accepted and a
+135-character one is dropped without an error, so the buffer is about 128
+bytes (the reference build uses 1024, and this one is much smaller). 40-byte
+chunks fit even once `off` needs a five-byte CBOR encoding; at that rate an
+upload takes about 15 minutes.
 
 **Stage 1 — unmodified vendor net app.** Copy completed (`os reset` returned
 `EBUSY` while `PCD_STATUS_COPY`, then 0), device booted, Bluetooth up:
@@ -172,7 +219,7 @@ bluetooth: Advertising successfully started
 
 **Stage 2 — same payload, deliberately invalid signature.** Only
 `fw_info.version` (1 -> 2 at `+0x214`) and the stored hash (`+0x29a64`) were
-changed; the signature at `+0x29ac0` was left alone, so it is valid only for
+changed; the signature at `+0x29ac4` was left alone, so it is valid only for
 the old hash. Identical result: device booted, Bluetooth up, same HCI banner.
 
 PCD writes the net app in place at `0x01008800`, so there is no older copy to
@@ -193,26 +240,26 @@ restored by other means.
 
 ## Failure behaviour (do not test casually)
 
-The net-side copy handler on error:
+The net-side loop that services PCD is `0x1005cc`. It dispatches on the magic
+(COPY / DONE / FAILED / READ_VERSION) and, on its error path, writes the FAIL
+magic:
 
-```c
-iVar3 = FUN_010040ae(fdev, data);           /* pcd_fw_copy */
-if (iVar3 != 0) {
-        iVar3 = FUN_01002608(device);       /* buffered retry */
-        if (iVar3 == 0) {
-                iVar3 = FUN_010040ae(fdev, data);
-                if (iVar3 != 0) {
-                        FUN_01002680();     /* PCD_CMD_MAGIC_FAIL */
-                        do { } while (true);  /* PCD polling never resumes */
-                }
-        }
-}
+```
+0x102680:  *0x20000000 = 0x25bafc15      ; PCD_CMD_MAGIC_FAIL
+           do { } while (true)           ; PCD polling never resumes
 ```
 
-A failed *copy* leaves the net core spinning, and `image 3` can no longer reach
-it; recovery would need SWD, which is destructive on this part. An image with a
-deliberately wrong hash was therefore **not** tested. It is also unnecessary:
-the attack needs a hash that matches, not one that does not.
+I am deliberately not asserting more than that: the build is from an older NCS
+than the reference tree, and the decompiler mis-orders this function's control
+flow (`Type propagation algorithm not settling`, a dozen removed unreachable
+blocks), so I can't say which call in which branch leads to the spin. What is
+clear is that a PCD error ends in `MAGIC_FAIL` plus an infinite loop in which
+the top-of-loop PCD poll is never reached again.
+
+That is why an image with a deliberately wrong hash was **not** tested: if it
+lands on that path, `image 3` can no longer reach the net core, and recovery
+would need SWD, which is destructive on this part. The test is also
+unnecessary — the attack needs a hash that matches, not one that does not.
 
 ## Reproducing
 
