@@ -101,10 +101,16 @@ flash-area table, and boot strings themselves.
 ## Known gaps (contributions wanted)
 
 - **Versions 1.1.1–1.1.4 and 1.1.6–1.1.8**. The OTA endpoint serves
-  latest-only and has already deleted older tuples (1.1.7 returns a missing
-  object error). A device readback is now the only source. 1.1.5 is now in the
-  inventory above (device readback by @smanaton); its manifest records build
-  `0e21a768aec0`, whole-image SHA-256
+  latest-only, and the bucket key uses a **7-character** short build ID while the
+  manifest reports the full **12-character** one. Asking for the long form
+  returns `{"message":"File does not exist"}`, which looks exactly like a
+  deletion but is a path-shape error: `1.1.5_0e21a76/app_update.bin` still
+  downloads and hashes to the archived copy, while `1.1.5_0e21a768aec0/…` does
+  not. So older versions are reachable *if their short build ID is known*, and
+  "deleted" should not be assumed — `1.1.9_bd223cf` and `1.1.0_90a06ec` both
+  still resolve. A device readback remains the practical source for versions
+  whose build ID is unknown. 1.1.5 is in the inventory above (device readback by
+  @smanaton); its manifest records build `0e21a768aec0`, whole-image SHA-256
   `94d38ea4f7cc8a273081ec6f5b76c87ab8b12bb11af08dd50c7c0016cd146eeb`,
   and signed-content digest
   `5b47290074e9904fad0007e1d5aed49800adc0c7044538917afa924c9ab233ab`.
@@ -125,9 +131,11 @@ anonymous-signup token; the Firebase web API key and project id are embedded
 in the stock APK (`ai.limitless.mobile`). The response's `signedURL` points
 at `storage.googleapis.com/firmware.limitless.ai/artifacts/pendant/…`. The
 endpoint serves the **latest** image only — there is no history, which is why
-this archive exists. Exact tuples confirmed so far:
-`1.1.9_bd223cf`, `1.1.20_b312ca1` (plus the dev-channel 1.1.20);
-`1.1.7` is deleted.
+this archive exists. Bucket keys use a 7-character short build ID
+(`1.1.20_b312ca1`), not the 12-character string in the manifest
+(`b312ca1efaaa`); the long form resolves to "File does not exist". Exact
+tuples confirmed so far: `1.1.9_bd223cf`, `1.1.20_b312ca1` (plus the
+dev-channel 1.1.20).
 
 ## Restoring a bricked unit (proven, no teardown)
 
