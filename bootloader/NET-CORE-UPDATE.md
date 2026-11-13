@@ -30,11 +30,19 @@ is too (`sha256 = 0d00cb8e…`). The firmware has not changed since 1.0.1.
 
 ## App core: the normal path skips validation
 
-`candidate_serial_image_upload()` (`0x3bcc` in the 1.1.5 bootloader) is stock
-MCUboot `img_mgmt_upload` with `MCUBOOT_SERIAL_DIRECT_IMAGE_UPLOAD`. It opens
+`candidate_serial_image_upload()` (`0x3bcc` in the bootloader on observed retail
+units) is stock MCUboot `img_mgmt_upload` with
+`MCUBOOT_SERIAL_DIRECT_IMAGE_UPLOAD`. It opens
 `flash_area_id_from_direct_image(img_num)`, erases, writes chunks, and on the
 last chunk calls a board hook. There is no `candidate_validate_slot`, no
 `candidate_validate_image_crypto`, no TLVs; the whole upload is a byte copy.
+
+**Note on addresses:** the disassembly and all offsets below are from the
+bootloader found on retail units observed here, which is the **1.0.1-era build**
+(`sha256 bd35f61d…`, byte-identical to the 1.0.1 release build in
+[`VERSIONS.md`](VERSIONS.md)). The 1.1.5/1.1.20 bundles ship a *different*
+bootloader build (`dae019a2…`, `0x60` larger) that has not been observed in the
+field; on such a unit these addresses will not line up.
 
 The hook is NCS's `nrf53_hooks.c`, and the stock binary matches it exactly:
 
