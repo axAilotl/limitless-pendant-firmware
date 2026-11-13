@@ -1,0 +1,34 @@
+help
+kernel version
+mcuboot_info stored_images_info
+device list
+device get battery
+device get nand
+device get storage
+storage status
+flash status
+flash bad_blocks
+ftl status
+devmem 0x1125F 32
+devmem 0x112BF 32
+devmem 0x50006500 32
+devmem 0x50006504 32
+devmem 0x50006540 32
+devmem 0x50006544 32
+devmem 0x50006548 32
+devmem 0x5000654C 32
+devmem 0x50006508 32
+devmem 0x50003400 32
+devmem 0x50003404 32
+devmem 0x50003408 32
+devmem 0x5000340C 32
+devmem 0x50003410 32
+devmem 0x50003414 32
+devmem 0x50003440 32
+devmem 0xFF8000 32
+devmem 0xFF8004 32
+devmem 0xFF801C 32
+devmem 0x95000 32
+devmem 0xa0000 32
+devmem 0xc0000 32
+devmem 0xd8000 32
