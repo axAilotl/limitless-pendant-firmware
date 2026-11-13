@@ -23,7 +23,7 @@ personal data.
 | `mcuboot_info stored_images_info` | app version + the `net_secondary` value (uninitialized-memory study across units) |
 | `devmem 0x1125F` / `0x112BF` | **which bootloader build your unit runs** (SPKI at 0x1125F = 1.0.1-era; at 0x112BF = 1.1.0+-era) — batch matrix |
 | `devmem 0x50006…` (CTRL-AP) | debug-protection lock states across manufacture batches |
-| `devmem 0x500034xx` (SPU) | flash-region permission/lock state (known to vary between units) |
+| `devmem 0x500036xx` (SPU FLASHREGION) | flash-region permission/lock state |
 | `devmem 0xFF8000…` (UICR) | APPROTECT/SECUREAPPROTECT words |
 | `devmem 0x95000…0xD8000` | **stale bytes past the app image end** — on units with long update history these can contain unarchived firmware versions (see the 1.0.1 recovery in PR #2) |
 
