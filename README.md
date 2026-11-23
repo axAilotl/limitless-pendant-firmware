@@ -156,8 +156,8 @@ the same on both loader builds we have seen:
   only if the vendor signature verifies, and no stock image carries a rollback
   counter, so a unit can be moved to any vendor-signed release. Proven on a
   sealed unit: 1.1.20 to factory 1.1.0 with
-  `recovery/pendant-1.1.0-vendor-signed.img`. Going back is the same procedure
-  with a stock OTA image; not yet exercised here.
+  `recovery/pendant-1.1.0-vendor-signed.img`. Going back was exercised the same
+  way: factory 1.1.0 to 1.1.20 in 59 s, booted as `1.1.20`.
 - **Image 3 installs a network-core image**
   ([`bootloader/NET-CORE-UPDATE.md`](bootloader/NET-CORE-UPDATE.md)).
 - `net/upload-net.py --state` is the read-only liveness probe, and the client

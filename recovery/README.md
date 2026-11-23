@@ -83,9 +83,11 @@ python3 net/upload-net.py --port <dev> --reset
 - The upload erases page by page as it advances. If it is interrupted the unit
   has no valid app: put it back in recovery with the button and upload again.
 - Going back is the same procedure with any stock OTA image, for example
-  `ota/limitless-pendant-1.1.20-production-release-e03aa55de923.img`.
-- The older app did not find the newer app's settings on our unit and fell back
-  to defaults. Expect to pair again.
+  `ota/limitless-pendant-1.1.20-production-release-e03aa55de923.img`. Exercised
+  the same day: factory 1.1.0 to 1.1.20 in 59 s, the loader listed slot 0 as
+  `1.1.20` with the stock hash, and the app booted as `1.1.20`.
+- Settings did not survive in either direction on our unit: each app fell back
+  to defaults when it could not find its own. Expect to pair again.
 
 ## Wi-Fi on factory 1.1.0
 
