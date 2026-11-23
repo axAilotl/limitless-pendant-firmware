@@ -34,3 +34,18 @@ every data point lands in the batch matrix.
 
 The session driver refuses write-form `devmem`, erase, upload and reset
 commands by design; the denylist is in the script.
+
+## Recovery console audit (read-only)
+
+`tools/recovery_console_audit.py` checks a Pendant that is sitting in USB
+recovery (`2fe3:0100`, red LED). It sweeps the SMP command set with read and
+empty write operations and measures the upload framing against the RAM staging
+area. It never writes flash: `os reset`, state writes and completed uploads are
+refused in the script.
+
+```sh
+lsusb -d 2fe3:0100     # must be in recovery; otherwise every answer is silence
+python3 tools/recovery_console_audit.py --port /dev/ttyACM0
+```
+
+What the console accepts: [`recovery/README.md`](../recovery/README.md).
