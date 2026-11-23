@@ -177,7 +177,7 @@ def transact(sp, seq, op, group, cmd, obj, timeout=3.0):
     end = time.time() + timeout
     buf = b""
     while time.time() < end:
-        buf += sp.read(4096)
+        buf += sp.read(sp.in_waiting or 1)
         msg = frames(buf)
         if msg:
             r = parse(msg)
@@ -228,7 +228,7 @@ def do_upload(port, path, image=3):
     hdr_size = struct.unpack_from("<H", data, 8)[0]
     reset = struct.unpack_from("<I", data, hdr_size + 4)[0]
     print(f"{path}: {total} B, image {image}, hdr {hdr_size:#x}, reset {reset:#010x}")
-    if reset <= B0N_ADDRESS:
+    if image == 3 and reset <= B0N_ADDRESS:  # only the net-core hook checks the reset vector
         sys.exit("the hook would reject this image (reset vector)")
 
     with open_port(port) as sp:
