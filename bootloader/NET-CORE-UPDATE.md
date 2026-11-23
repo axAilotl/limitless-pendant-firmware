@@ -213,6 +213,11 @@ bytes (the reference build uses 1024, and this one is much smaller). 40-byte
 chunks fit even once `off` needs a five-byte CBOR encoding; at that rate an
 upload takes about 15 minutes.
 
+The 15 minutes was the client. `upload-net.py` used to wait out a 200 ms port
+timeout on every reply; since 2026-11-23 it returns as soon as the reply frame
+arrives, and the same upload takes about 15 s. 48-byte chunks also fit. Data is
+written in 4-byte units, so continue from the acknowledged offset.
+
 **Stage 1 — unmodified vendor net app.** Copy completed (`os reset` returned
 `EBUSY` while `PCD_STATUS_COPY`, then 0), device booted, Bluetooth up:
 

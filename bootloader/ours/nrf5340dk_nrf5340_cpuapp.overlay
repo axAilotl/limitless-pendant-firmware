@@ -1,0 +1,16 @@
+/* Factory layout: loader at 0x0 (boot_partition), one big app slot, no secondary. */
+&slot0_partition { reg = <0x14000 0xec000>; };
+/delete-node/ &slot1_partition;
+
+/ {
+    chosen {
+        zephyr,code-partition = &boot_partition;
+        zephyr_cdc_acm_uart = &cdc_acm_uart0;
+    };
+};
+&usbd {
+    status = "okay";
+    cdc_acm_uart0: cdc_acm_uart0 {
+        compatible = "zephyr,cdc-acm-uart";
+    };
+};

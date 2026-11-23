@@ -29,10 +29,13 @@ and the research gists linked at the bottom.
 | `ota/limitless-pendant-1.1.5-production-release-94d38ea4.img` | 523,587 | `94d38ea4f7cc8a273081ec6f5b76c87ab8b12bb11af08dd50c7c0016cd146eeb` | vendor OTA endpoint, production channel (`1.1.5_0e21a76`); byte-identical to the USB-shell readback above |
 | `ota/limitless-pendant-1.1.5-dev-release-0e6bd5b0.img` | 523,587 | `0e6bd5b0001194a92cc8ed6c9d5078f2d5961604679a1f9dcef6442a1aef712d` | vendor OTA endpoint, development channel (same payload; KEYHASH `60ae7f65…`) |
 | `ota/limitless-pendant-1.1.9-dev-release-087cd34f.img` | 524,490 | `087cd34fbb7e8e6d756e9c426369c3dd7e078f6348bca07813c3ed3fef1ab4d7` | vendor OTA endpoint, development channel (`1.1.9_bd223cf`); pairs with the production image already listed |
+| `recovery/pendant-1.1.0-vendor-signed.img` | 921,952 | `72324a569415d3ca39b96e2c7df73e249f9d2df99bc99bb71dc7dc52a63e6c37` | header + payload + TLV portion of the 1.1.0 slot dump above; `imgtool verify` passes against the retail key |
 
 `SHA256SUMS` at the root covers every file. The network-core artifacts
 (B0N, provision, net app for 1.0.1 / 1.1.5 / 1.1.20) are in
-[`net/`](net/README.md), which has its own inventory table.
+[`net/`](net/README.md), which has its own inventory table. Owner-key
+bootloaders and an app signed with our key are in
+[`bootloader/ours/`](bootloader/ours/README.md).
 
 ## Why the 1.1.0 dump matters
 
@@ -46,6 +49,11 @@ audio-streaming endpoint over Wi-Fi, no exploit needed.
 
 (Correction: the earlier "network-core child" files were app-image slices;
 the Wi-Fi stack lives in the 1.1.0 app image itself.)
+
+Update 2026-11-23: the stack is there, but on two retail units the Wi-Fi
+radio never joined an access point that a phone joined (WPA2 or open), and
+the battery gauge showed no scan current during the attempt. Wi-Fi did not
+work on the retail hardware we have. See [`recovery/README.md`](recovery/README.md).
 
 ## Network core: resolved 2026-11-11
 
@@ -122,6 +130,8 @@ flash-area table, and boot strings themselves.
 - Net-core UICR (never observed).
 - Bootloader/UICR dumps + dev-key acceptance results across manufacture
   batches (batch variance is cheap and occasionally decisive).
+- **Wi-Fi bring-up on factory 1.1.0**: the device reports `READY` but the
+  radio never becomes active during a connect attempt. Cause unknown.
 
 ## Getting the current OTA image yourself
 
@@ -136,6 +146,25 @@ this archive exists. Bucket keys use a 7-character short build ID
 (`b312ca1efaaa`); the long form resolves to "File does not exist". Exact
 tuples confirmed so far: `1.1.9_bd223cf`, `1.1.20_b312ca1` (plus the
 dev-channel 1.1.20).
+
+## USB recovery console (2026-11-23)
+
+The side-button recovery console accepts more than restores, and it behaves
+the same on both loader builds we have seen:
+
+- **Image 0 writes the app's primary slot in place.** The loader then boots it
+  only if the vendor signature verifies, and no stock image carries a rollback
+  counter, so a unit can be moved to any vendor-signed release. Proven on a
+  sealed unit: 1.1.20 to factory 1.1.0 with
+  `recovery/pendant-1.1.0-vendor-signed.img`. Going back is the same procedure
+  with a stock OTA image; not yet exercised here.
+- **Image 3 installs a network-core image**
+  ([`bootloader/NET-CORE-UPDATE.md`](bootloader/NET-CORE-UPDATE.md)).
+- `net/upload-net.py --state` is the read-only liveness probe, and the client
+  now takes about 15 s for a net image instead of 15 minutes.
+
+Framing, limits and step-by-step recipes:
+[`recovery/README.md`](recovery/README.md).
 
 ## Restoring a bricked unit (proven, no teardown)
 
@@ -152,6 +181,13 @@ mcumgr --conntype serial --connstring 'dev=/dev/ttyACM0,baud=115200,mtu=512' res
 Upload acceptance is transport-only; MCUboot still verifies the signature
 before anything boots. These stock images carry the vendor signature, so
 restore works on retail bootloaders.
+
+The same two steps with the Python client, which needs only `pyserial`:
+
+```sh
+python3 net/upload-net.py --port /dev/ttyACM0 --image 0 --file ota/limitless-pendant-1.1.20-production-release-e03aa55de923.img
+python3 net/upload-net.py --port /dev/ttyACM0 --reset
+```
 
 ## Ethics / scope
 

@@ -37,9 +37,21 @@ mass-erase restore, match the bootloader to the unit's manufacture batch:
 - a unit like ours (1.0.1-era bootloader) should be restored with
   `nrf5340-appcore-boot-0x0-0x14000.bin` — the retail readback, identical to the
   1.0.1 release build;
-- a later unit may carry the 1.1.5/1.1.20 build, but this is unverified: no unit with
-  that bootloader has been observed here.
+- a later unit may carry the 1.1.5/1.1.20 build. One has been seen since: its
+  loader shows the newer layout (SPKI header at `0x112BF`, nothing at
+  `0x1125F`), but only single words were read, not a full dump.
 
 The vendor cannot patch the bootloader OTA, and it does not appear to reflash it in the
 field, so the population is probably split by manufacture date. Dumping `0x0–0x14000`
 over the shell and comparing the first 32-bit words is enough to classify a unit.
+
+## Owner-key rebuilds (not vendor builds)
+
+Two more loaders live in [`ours/`](ours/README.md). They are not vendor
+artifacts and never ship on a retail unit; they are what we flash over SWD so
+a unit boots our own signed images.
+
+| file | sha256 | key | loader region after boot |
+|---|---|---|---|
+| `ours/nrf5340-appcore-boot-rev2-ours.bin` | `62fc2e1b98a362e377ba8dbbf65a64fc043aae2f3c26b94d2ca364a751714645` | ours, SPKI at `0xD470` | unlocked (`0x17`) |
+| `ours/nrf5340-appcore-boot-rev3-ours.bin` | `98be37076802d94a562657a7b1ffcb1c73fe5614d5cb89e0eb7adff0231f70ce` | ours, SPKI at `0x112BF` (64 bytes changed from the 1.1.5 release loader) | stock lockdown (`0x115`) |
