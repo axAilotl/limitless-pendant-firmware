@@ -199,6 +199,7 @@ preservation hosting, open an issue and we will resolve it with you.
 ## Links
 
 - [limitless-libre issue #1](https://github.com/shade-familiar/limitless-libre/issues/1) — the running research thread
+- [Thread archive (gist)](https://gist.github.com/axAilotl/f56f0079f17e4eaf0eac1a9cd5f9620f) — issue #1 mirrored verbatim through 2026-11-23 21:37 UTC, with the raw GitHub API capture, in case the source repository disappears
 - [Routes-to-unsigned-firmware catalog (gist)](https://gist.github.com/axAilotl/04cb12148f6c697e7720d77ef87fbc9e)
 - [Recovery, signing & interop field report (gist)](https://gist.github.com/axAilotl/2b897e8ca193ea1af2c2a44669783d4a)
 - [RePendant](https://github.com/COREkunas/RePendant) — working custom firmware + app for the Pendant (first flash via SWD)
